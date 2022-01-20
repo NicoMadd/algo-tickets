@@ -1,17 +1,17 @@
 
+#### algo-tickets-api
+
 # remove node modules
 algo-tickets-api/node_modules/
-algo-tickets-react/node_modules/
 
 # remove package-lock.json
-
 algo-tickets-api/package-lock.json
-algo-tickets-react/package-lock.json
 
 # remove py folder
 algo-tickets-api/py
 
-# remove env file
+# remove .env
+
 algo-tickets-api/.env
 
 # remove wallets
@@ -22,3 +22,15 @@ algo-tickets-api/wallets
 
 # remove logs
 algo-tickets-api/src/logs
+
+#### algo-tickets-react
+
+# remove node modules
+algo-tickets-react/node_modules/
+
+# remove package-lock.json
+algo-tickets-react/package-lock.json
+
+# remove .next folder
+
+algo-tickets-react/.next
