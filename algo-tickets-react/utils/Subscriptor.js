@@ -22,6 +22,7 @@ class Subscriptor {
 
 	notify = (data) => {
 		this.subcribers.forEach((subscriber) => {
+			console.log("notify", subscriber)
 			subscriber.updFunc(data)
 		})
 	}

@@ -1,8 +1,8 @@
 import styles from "../styles/Home.module.css"
 import { useWallet, walletManager } from "../utils/walletConnect.js"
 
-export default function Login({ account, onLogin }) {
-	const [wallet, subscribe, unsubscribe] = useWallet()
+export default function Login({ onLogin }) {
+	const [wallet, subscribe, unsubscribe] = useWallet("login")
 	console.log("login wallet", wallet)
 
 	const handleSubmit = (e) => {
@@ -10,7 +10,7 @@ export default function Login({ account, onLogin }) {
 		try {
 			const wallet = walletManager.connect()
 			console.log("logging wallet", wallet)
-			if (walletManager.isConnected()) onLogin(wallet)
+			onLogin(wallet)
 		} catch (err) {
 			console.log(err)
 		}

@@ -1,8 +1,9 @@
 import WalletConnect from "@walletconnect/client"
 import QRCodeModal from "@walletconnect/qrcode-modal"
-import Subscriptor from "./Subcriptor"
+import Subscriptor from "./Subscriptor"
 import { useState } from "react"
 import { makeid } from "../utils/utils"
+import { storage } from "../utils/storage"
 
 class WalletManager extends Subscriptor {
 	constructor() {
@@ -13,6 +14,7 @@ class WalletManager extends Subscriptor {
 	getWallet = () => this.wallet
 
 	setWallet = (wallet) => {
+		console.log("set wallet", this.wallet, wallet)
 		this.wallet = wallet
 		this.notify(wallet)
 	}
@@ -22,34 +24,27 @@ class WalletManager extends Subscriptor {
 	}
 
 	disconnect = async () => {
-		if (this.getWallet()?.connected) await this.getWallet().killSession()
+		if (this.isConnected()) await this.getWallet().killSession()
 	}
 
-	onSubscribe = (wallet) => {
-		this.subcribers.forEach((subscriber) => subscriber.updFunc(wallet))
-	}
+	onSubscribe = (wallet) => {}
 
 	connect = () => {
-		if (this.isConnected()) return wallet
+		if (this.isConnected()) return this.getWallet()
 		try {
 			var wallet = new WalletConnect({
 				bridge: "https://bridge.walletconnect.org", // Required
 				qrcodeModal: QRCodeModal,
 			})
-			this.setEvents(wallet)
+			if (!wallet?.connected) wallet.createSession()
 			this.setWallet(wallet)
+			this.setEvents(this.getWallet())
 			return this.getWallet()
 		} catch (e) {
 			console.log(e)
 		}
 	}
 	setEvents = (wallet) => {
-		// Check if connection is already established
-		if (!wallet.connected) {
-			// create new session
-			wallet.createSession()
-		}
-
 		wallet.on("connect", (error, payload) => {
 			if (error) {
 				throw error
@@ -60,6 +55,7 @@ class WalletManager extends Subscriptor {
 			auxWallet.accounts = accounts
 			auxWallet.chainId = chainId
 			this.setWallet(auxWallet)
+			console.log("wallet connect", this.getWallet())
 		})
 
 		wallet.on("session_update", (error, payload) => {
@@ -69,10 +65,10 @@ class WalletManager extends Subscriptor {
 
 			// Get updated accounts and chainId
 			const { accounts, chainId } = payload.params[0]
-			const auxWallet = this.getWallet()
-			auxWallet.accounts = accounts
-			auxWallet.chainId = chainId
-			this.setWallet(auxWallet)
+			// const auxWallet = this.getWallet()
+			// auxWallet.accounts = accounts
+			// auxWallet.chainId = chainId
+			// this.setWallet(auxWallet)
 		})
 
 		wallet.on("disconnect", (error, payload) => {
@@ -88,13 +84,13 @@ class WalletManager extends Subscriptor {
 
 const walletManager = new WalletManager()
 
-const useWallet = () => {
+const useWallet = (customId) => {
 	const [wallet, setWallet] = useState(walletManager.getWallet())
-	const id = makeid(10)
+	const id = customId || makeid(10)
 	return [
 		wallet,
 		() => {
-			walletManager.subscribe(id), setWallet
+			walletManager.subscribe(id, setWallet)
 		},
 		() => {
 			walletManager.unsubscribe(id)

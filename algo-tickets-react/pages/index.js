@@ -10,46 +10,36 @@ const getAccountInfo = async (account) =>
 	await axios.get(`/api/algorand/${account}/info`).then((res) => res.data)
 
 export default function Index({ storedInfo }) {
-	const [wallet, subscribe, unsubscribe] = useWallet()
+	const [wallet, subscribe, unsubscribe] = useWallet("index")
 	const [info, setInfo] = useState({})
 
+	const updateAccountInfo = async (wallet) => {
+		const account = wallet.accounts[0]
+		const info = await getAccountInfo(account)
+		setInfo(info)
+	}
 	const handleLogin = async (wallet) => {
-		console.log("wallet", wallet)
-		// setAccount(account)
-		// const info = await getAccountInfo(account)
-		// setInfo(info)
-		// await storage.setItem("accountInfo", account)
+		console.log("index wallet", wallet)
+		await updateAccountInfo(wallet)
 	}
 
-	const handleLogout = async () => {
-		// console.log("index logout")
-		// await storage.removeItem("accountInfo")
-		// setAccount(null)
-		// setInfo({})
+	const handleLogout = () => {
+		console.log("index logout")
+		setInfo({})
 	}
 
 	useEffect(async () => {
 		console.log("index wallet", wallet)
-		// storage.getItem("accountInfo").then((account) => {
-		// 	if (account) {
-		// 		setAccount(account)
-		// 		getAccountInfo(account).then((info) => setInfo(info))
-		// 	}
-		// })
-	}, [])
+		subscribe()
+
+		if (walletManager.isConnected()) updateAccountInfo(wallet)
+
+		return unsubscribe()
+	}, [wallet])
 	return (
 		<>
 			<TopBar onLogin={handleLogin} onLogout={handleLogout} />
 			<Home info={info} />
-			{
-				// button on click disconnect from walletconnect
-			}
-			<button
-				className={customStyles.button}
-				onClick={async () => walletManager.disconnect()}
-			>
-				Disconnect
-			</button>
 
 			{
 				// button on click print walletconnect info

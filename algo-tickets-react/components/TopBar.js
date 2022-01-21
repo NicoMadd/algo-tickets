@@ -1,22 +1,29 @@
-import React from "react"
+import React, { useEffect } from "react"
 import Login from "./Login"
 import Logout from "./Logout"
-import { useWallet, disconnect } from "../utils/walletConnect.js"
+import { useWallet, disconnect, walletManager } from "../utils/walletConnect.js"
 
 export default function TopBar({ onLogin, onLogout }) {
-	const [wallet, subscribe, unsubscribe] = useWallet()
+	const [wallet, subscribe, unsubscribe] = useWallet("topbar")
 	const handleLogout = () => {
-		disconnect()
 		onLogout()
 	}
 
-	console.log("wallet", wallet)
+	const handleLogin = (wallet) => {
+		onLogin(wallet)
+	}
+
+	useEffect(() => {
+		subscribe()
+		console.log("topbar wallet", wallet)
+		return unsubscribe()
+	}, [wallet])
 
 	return (
 		<>
 			<div>
-				{wallet == null ? (
-					<Login onLogin={onLogin} />
+				{!walletManager.isConnected() ? (
+					<Login onLogin={handleLogin} />
 				) : (
 					<Logout onLogout={handleLogout} />
 				)}
