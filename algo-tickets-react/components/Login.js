@@ -1,20 +1,29 @@
 import styles from "../styles/Home.module.css"
-import { useRouter } from "next/router"
+import { useWallet, walletManager } from "../utils/walletConnect.js"
 
 export default function Login({ account, onLogin }) {
+	const [wallet, subscribe, unsubscribe] = useWallet()
+	console.log("login wallet", wallet)
+
 	const handleSubmit = (e) => {
 		e.preventDefault()
-		onLogin(e.target[0].value)
+		try {
+			const wallet = walletManager.connect()
+			console.log("logging wallet", wallet)
+			if (walletManager.isConnected()) onLogin(wallet)
+		} catch (err) {
+			console.log(err)
+		}
 	}
 
-	if (account) return <></>
+	if (wallet) return <></>
 	return (
 		<div>
 			<div className={styles.container}>
 				<div className={styles.content}>
 					<form onSubmit={handleSubmit}>
-						<input type="text" placeholder="Enter account" />
-						<button type="submit">Submit</button>
+						{/* <input type="text" placeholder="Enter account" /> */}
+						<button type="submit">Connect to your Wallet</button>
 					</form>
 				</div>
 			</div>
