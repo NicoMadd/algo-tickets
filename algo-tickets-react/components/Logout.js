@@ -1,11 +1,22 @@
-import React from "react"
-import { walletManager } from "../utils/walletConnect"
+import React, { useContext, useEffect, useRef, useState } from "react"
+import AppContext from "../utils/AppContext"
 
-export default function Logout({ onLogout }) {
-	const handleLogout = () => {
-		walletManager.disconnect()
-		onLogout()
+export default function Logout({}) {
+	const context = useContext(AppContext)
+	const [wallet, setWallet] = useState(context.wallet)
+
+	const handleLogout = async () => {
+		console.log("Logout")
+
+		context.wallet.disconnect()
 	}
 
-	return <button onClick={handleLogout}>Logout from account</button>
+	useEffect(() => {
+		setWallet(context.wallet)
+	}, [context])
+	return (
+		<>
+			<button onClick={handleLogout}>Logout from account </button>
+		</>
+	)
 }

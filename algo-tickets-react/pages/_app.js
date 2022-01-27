@@ -1,13 +1,22 @@
 import "../styles/globals.css"
-import Head from "next/head"
-import Image from "next/image"
-import styles from "../styles/Home.module.css"
-import axiosConfig from "../utils/axiosConfig"
+import { Wallet } from "../utils/wallet"
+import AppContext from "../utils/AppContext"
+import WalletConnect from "@walletconnect/client"
+import QRCodeModal from "@walletconnect/qrcode-modal"
 
 function MyApp({ Component, pageProps }) {
+	const connector = new WalletConnect({
+		bridge: "https://bridge.walletconnect.org", // Required
+		qrcodeModal: QRCodeModal,
+	})
+
+	const wallet = new Wallet(connector)
+
 	return (
 		<>
-			<Component {...pageProps} />
+			<AppContext.Provider value={{ wallet }}>
+				<Component {...pageProps} />
+			</AppContext.Provider>
 		</>
 	)
 }

@@ -1,31 +1,54 @@
+import { makeid } from "../utils/utils"
+import { useState } from "react"
 class Subscriptor {
 	constructor() {
-		this.subcribers = []
+		this.subscribers = []
 	}
 
-	subscribe = (id, updFunc) => {
-		this.subcribers = this.subcribers.filter(
+	subscribe = (id, onNotify) => {
+		this.subscribers = this.subscribers.filter(
 			(subscriber) => subscriber.id !== id
 		)
-		this.subcribers.push({ id, updFunc })
+		this.subscribers.push({ id, onNotify })
+		console.log("subscribed", id)
 		this.onSubscribe(id)
 	}
 
 	onSubscribe = () => {}
 
 	unsubscribe = (id) => {
-		this.subcribers.filter((subscriber) => subscriber.id !== id)
+		this.subscribers = this.subscribers.filter(
+			(subscriber) => subscriber.id !== id
+		)
+		console.log("unsubscribed " + id)
 		this.onUnsubscribe(id)
 	}
 
 	onUnsubscribe = () => {}
 
 	notify = (data) => {
-		this.subcribers.forEach((subscriber) => {
-			console.log("notify", subscriber)
-			subscriber.updFunc(data)
+		console.log("notify", data)
+		this.subscribers.forEach((subscriber) => {
+			console.log("notifying", subscriber, data)
+			subscriber.onNotify(data)
 		})
 	}
 }
 
+const useSubscritor = (customId, data, manager) => {
+	const [state, setState] = useState(data)
+	const id = customId || makeid(5)
+
+	return [
+		state,
+		() => {
+			manager.subscribe(id, setState)
+		},
+		() => {
+			manager.unsubscribe(id)
+		},
+	]
+}
+
 export default Subscriptor
+export { useSubscritor }

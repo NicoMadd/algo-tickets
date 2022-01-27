@@ -40,7 +40,7 @@ const setTokenHeader = (app) => {
 
 const configureSecurity = (app) => {
 	app.use((req, res, next) => {
-		logger.info(`req.token: ${req.token}`)
+		// logger.info(`req.token: ${req.token}`)
 		validateToken(req.token)
 			? next()
 			: next(createError(403, "Error! No posee credenciales validas."))

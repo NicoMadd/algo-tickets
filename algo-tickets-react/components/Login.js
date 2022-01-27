@@ -1,22 +1,22 @@
 import styles from "../styles/Home.module.css"
-import { useWallet, walletManager } from "../utils/walletConnect.js"
+import { useWallet, getWallet, walletManager } from "../utils/wallet.js"
+import { useEffect, useState, useContext, useRef } from "react"
+import { useDataManager } from "../utils/subscriptor test"
+import AppContext from "../utils/AppContext"
 
-export default function Login({ onLogin }) {
-	const [wallet, subscribe, unsubscribe] = useWallet("login")
-	console.log("login wallet", wallet)
+export default function Login({}) {
+	const context = useContext(AppContext)
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
 		try {
-			const wallet = walletManager.connect()
-			console.log("logging wallet", wallet)
-			onLogin(wallet)
+			console.log("login")
+			context.wallet.connect()
 		} catch (err) {
 			console.log(err)
 		}
 	}
 
-	if (wallet) return <></>
 	return (
 		<div>
 			<div className={styles.container}>
