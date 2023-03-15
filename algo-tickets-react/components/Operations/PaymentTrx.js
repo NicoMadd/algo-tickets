@@ -11,7 +11,7 @@ export default function PaymentTrx() {
 
 	const makeTransaction = async () => {
 		try {
-			const signedTxn = await context.wallet.makeTransaction({
+			const signedTxn = await context.wallet.makePaymentTransaction({
 				to: accountTo,
 				from: context.wallet.accounts[0],
 				amount: amount,

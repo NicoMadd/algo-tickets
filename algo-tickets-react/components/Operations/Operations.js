@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react"
 import AppContext from "../../utils/AppContext"
 import Collapse from "../Collapse/Collapse"
+import AssetTransferTrx from "./AssetTransferTrx"
 import PaymentTrx from "./PaymentTrx"
 
 export default function Operations() {
@@ -8,8 +9,11 @@ export default function Operations() {
 
 	return (
 		<>
-			<Collapse sharedLabel="Make Transaction">
+			<Collapse sharedLabel="Make Payment Transaction">
 				<PaymentTrx />
+			</Collapse>
+			<Collapse sharedLabel="Make Asset Transfer Transaction ">
+				<AssetTransferTrx />
 			</Collapse>
 		</>
 	)
